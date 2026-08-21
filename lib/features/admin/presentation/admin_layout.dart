@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/theme/app_theme.dart';
-import '../../auth/presentation/login_screen.dart';
+import '../../../core/services/logout_service.dart';
 import 'views/dashboard_overview_view.dart';
 import 'views/employee_management_view.dart';
 import 'views/leave_approval_view.dart';
 import 'views/announcement_management_view.dart';
 import 'views/geofence_setting_view.dart';
 import 'views/schedule_management_view.dart';
+import '../../auth/presentation/login_screen.dart';
 
 class AdminLayout extends ConsumerStatefulWidget {
   const AdminLayout({Key? key}) : super(key: key);
@@ -37,20 +38,51 @@ class _AdminLayoutState extends ConsumerState<AdminLayout> {
     {'title': 'Pengaturan Geofence', 'icon': Icons.location_on_outlined},
   ];
 
+  Future<void> _confirmLogout() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Konfirmasi Logout'),
+        content: const Text(
+            'Apakah Anda yakin ingin keluar dari sesi ini?\nAnda akan diminta login kembali saat membuka aplikasi.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Batal'),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: AppTheme.roseDanger),
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('Keluar', style: TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
+    );
+    if (confirmed == true && mounted) {
+      await performLogout(context, ref);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final profile = ref.watch(currentProfileProvider);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    final sidebarBg = isDark ? AppTheme.darkSurface : AppTheme.slateGray;
+    final headerBg = isDark ? AppTheme.darkCard : Colors.white;
+    final headerBorder = isDark ? AppTheme.darkBorder : AppTheme.neutralBorder;
+    final selectedTileColor =
+        isDark ? AppTheme.darkNavy : AppTheme.primaryNavy;
 
     return Scaffold(
-      backgroundColor: AppTheme.softBackground,
+      backgroundColor:
+          isDark ? AppTheme.darkBackground : AppTheme.softBackground,
       body: Row(
         children: [
-          // Sidebar Navigation Desktop
+          // ── Sidebar Navigation Desktop ──────────────────────────────────
           Container(
             width: 260,
-            decoration: const BoxDecoration(
-              color: AppTheme.slateGray,
-            ),
+            decoration: BoxDecoration(color: sidebarBg),
             child: Column(
               children: [
                 // Brand Header
@@ -64,12 +96,13 @@ class _AdminLayoutState extends ConsumerState<AdminLayout> {
                           color: AppTheme.emeraldGreen,
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        child: const Icon(Icons.fingerprint, color: Colors.white, size: 24),
+                        child: const Icon(Icons.fingerprint,
+                            color: Colors.white, size: 24),
                       ),
                       const SizedBox(width: 12),
-                      Column(
+                      const Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
+                        children: [
                           Text(
                             'FENSI Admin',
                             style: TextStyle(
@@ -103,8 +136,9 @@ class _AdminLayoutState extends ConsumerState<AdminLayout> {
                         padding: const EdgeInsets.only(bottom: 6),
                         child: ListTile(
                           selected: isSelected,
-                          selectedTileColor: AppTheme.primaryNavy,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          selectedTileColor: selectedTileColor,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12)),
                           leading: Icon(
                             item['icon'],
                             color: isSelected ? Colors.white : Colors.white60,
@@ -113,8 +147,12 @@ class _AdminLayoutState extends ConsumerState<AdminLayout> {
                           title: Text(
                             item['title'],
                             style: TextStyle(
-                              color: isSelected ? Colors.white : Colors.white70,
-                              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                              color: isSelected
+                                  ? Colors.white
+                                  : Colors.white70,
+                              fontWeight: isSelected
+                                  ? FontWeight.bold
+                                  : FontWeight.normal,
                               fontSize: 14,
                             ),
                           ),
@@ -129,23 +167,22 @@ class _AdminLayoutState extends ConsumerState<AdminLayout> {
                   ),
                 ),
 
-                // Logout Bottom Option
+                // Logout Button
                 const Divider(color: Colors.white12, height: 1),
                 ListTile(
-                  leading: const Icon(Icons.logout, color: AppTheme.roseDanger, size: 20),
-                  title: const Text('Keluar (Logout)', style: TextStyle(color: AppTheme.roseDanger, fontSize: 14)),
-                  onTap: () {
-                    Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(builder: (context) => const LoginScreen()),
-                    );
-                  },
+                  leading: const Icon(Icons.logout,
+                      color: AppTheme.roseDanger, size: 20),
+                  title: const Text('Keluar (Logout)',
+                      style: TextStyle(
+                          color: AppTheme.roseDanger, fontSize: 14)),
+                  onTap: _confirmLogout,
                 ),
                 const SizedBox(height: 12),
               ],
             ),
           ),
 
-          // Main View Content Container
+          // ── Main Content ────────────────────────────────────────────────
           Expanded(
             child: Column(
               children: [
@@ -153,23 +190,24 @@ class _AdminLayoutState extends ConsumerState<AdminLayout> {
                 Container(
                   height: 70,
                   padding: const EdgeInsets.symmetric(horizontal: 28),
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                    border: Border(bottom: BorderSide(color: AppTheme.neutralBorder)),
+                  decoration: BoxDecoration(
+                    color: headerBg,
+                    border: Border(
+                        bottom: BorderSide(color: headerBorder)),
                   ),
                   child: Row(
                     children: [
                       Text(
                         _menuItems[_selectedIndex]['title'],
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
-                          color: AppTheme.slateGray,
+                          color: isDark
+                              ? AppTheme.darkTextPrimary
+                              : AppTheme.slateGray,
                         ),
                       ),
                       const Spacer(),
-
-                      // Quick User Profile Info
                       Row(
                         children: [
                           CircleAvatar(
@@ -177,7 +215,9 @@ class _AdminLayoutState extends ConsumerState<AdminLayout> {
                             backgroundColor: AppTheme.primaryNavy,
                             child: Text(
                               profile?.fullName.substring(0, 1) ?? 'A',
-                              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                              style: const TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold),
                             ),
                           ),
                           const SizedBox(width: 10),
@@ -186,10 +226,24 @@ class _AdminLayoutState extends ConsumerState<AdminLayout> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                profile?.fullName ?? 'Budi Santoso',
-                                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                                profile?.fullName ?? 'Admin HC',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 13,
+                                  color: isDark
+                                      ? AppTheme.darkTextPrimary
+                                      : AppTheme.slateGray,
+                                ),
                               ),
-                              const Text('Human Capital Admin', style: TextStyle(fontSize: 11, color: AppTheme.textMuted)),
+                              Text(
+                                'Human Capital Admin',
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  color: isDark
+                                      ? AppTheme.darkTextMuted
+                                      : AppTheme.textMuted,
+                                ),
+                              ),
                             ],
                           ),
                         ],
@@ -198,7 +252,7 @@ class _AdminLayoutState extends ConsumerState<AdminLayout> {
                   ),
                 ),
 
-                // Dynamic Body Content View
+                // Dynamic Body
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.all(28.0),

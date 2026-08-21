@@ -6,6 +6,7 @@ import '../../../core/theme/app_theme.dart';
 import '../../../core/widgets/custom_button.dart';
 import '../../../core/widgets/custom_card.dart';
 import '../../../core/widgets/status_badge.dart';
+import '../../../core/services/logout_service.dart';
 import '../../auth/presentation/login_screen.dart';
 import '../../leave/presentation/leave_submission_screen.dart';
 import '../../announcement/presentation/announcement_board_screen.dart';
@@ -412,6 +413,12 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final navBg = isDark ? AppTheme.darkSurface : Colors.white;
+    final navBorder = isDark ? AppTheme.darkBorder : AppTheme.neutralBorder;
+    final selectedColor = isDark ? AppTheme.darkNavy : AppTheme.primaryNavy;
+    final unselectedColor = isDark ? AppTheme.darkTextMuted : AppTheme.textMuted;
+
     final List<Widget> pages = [
       _buildAttendanceView(),
       const LeaveSubmissionScreen(),
@@ -422,36 +429,59 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Row(
-          children: const [
-            Icon(Icons.fingerprint, color: AppTheme.primaryNavy, size: 24),
-            SizedBox(width: 8),
-            Text('FENSI Mobile'),
+          children: [
+            Icon(Icons.fingerprint,
+                color: isDark ? AppTheme.darkNavy : AppTheme.primaryNavy,
+                size: 24),
+            const SizedBox(width: 8),
+            const Text('FENSI Mobile'),
           ],
         ),
         actions: [
           IconButton(
             icon: const Icon(Icons.logout, color: AppTheme.roseDanger),
             tooltip: 'Logout',
-            onPressed: () {
-              Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (context) => const LoginScreen()),
+            onPressed: () async {
+              final confirmed = await showDialog<bool>(
+                context: context,
+                builder: (ctx) => AlertDialog(
+                  title: const Text('Konfirmasi Logout'),
+                  content: const Text(
+                      'Apakah Anda yakin ingin keluar?\nAnda akan diminta login kembali saat membuka aplikasi.'),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(ctx, false),
+                      child: const Text('Batal'),
+                    ),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: AppTheme.roseDanger),
+                      onPressed: () => Navigator.pop(ctx, true),
+                      child: const Text('Keluar',
+                          style: TextStyle(color: Colors.white)),
+                    ),
+                  ],
+                ),
               );
+              if (confirmed == true && mounted) {
+                await performLogout(context, ref);
+              }
             },
           )
         ],
       ),
       body: pages[_currentBottomNavIndex],
       bottomNavigationBar: Container(
-        decoration: const BoxDecoration(
-          border: Border(top: BorderSide(color: AppTheme.neutralBorder)),
+        decoration: BoxDecoration(
+          border: Border(top: BorderSide(color: navBorder)),
         ),
         child: BottomNavigationBar(
           currentIndex: _currentBottomNavIndex,
-          selectedItemColor: AppTheme.primaryNavy,
-          unselectedItemColor: AppTheme.textMuted,
+          selectedItemColor: selectedColor,
+          unselectedItemColor: unselectedColor,
           showUnselectedLabels: true,
           type: BottomNavigationBarType.fixed,
-          backgroundColor: Colors.white,
+          backgroundColor: navBg,
           elevation: 0,
           onTap: (index) {
             setState(() {
