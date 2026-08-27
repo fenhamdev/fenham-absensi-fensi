@@ -16,13 +16,14 @@ class DashboardOverviewView extends StatelessWidget {
           // Stat Cards Summary Row
           LayoutBuilder(
             builder: (context, constraints) {
-              final isDesktop = constraints.maxWidth > 900;
+              final isDesktop = constraints.maxWidth >= 900;
+              final isMobile = constraints.maxWidth < 550;
               return GridView.count(
-                crossAxisCount: isDesktop ? 4 : 2,
+                crossAxisCount: isDesktop ? 4 : (isMobile ? 1 : 2),
                 crossAxisSpacing: 16,
                 mainAxisSpacing: 16,
                 shrinkWrap: true,
-                childAspectRatio: isDesktop ? 1.8 : 1.4,
+                childAspectRatio: isDesktop ? 1.8 : (isMobile ? 2.6 : 1.6),
                 physics: const NeverScrollableScrollPhysics(),
                 children: const [
                   _StatCard(
@@ -58,7 +59,7 @@ class DashboardOverviewView extends StatelessWidget {
           // Visual Analytics Charts Row
           LayoutBuilder(
             builder: (context, constraints) {
-              final isDesktop = constraints.maxWidth > 900;
+              final isDesktop = constraints.maxWidth >= 900;
               return isDesktop
                   ? Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -84,26 +85,60 @@ class DashboardOverviewView extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
-                      'Log Absensi Karyawan Hari Ini (Realtime)',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppTheme.slateGray),
-                    ),
-                    TextButton.icon(
-                      icon: const Icon(Icons.file_download, size: 18),
-                      label: const Text('Ekspor Laporan'),
-                      onPressed: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Laporan absensi berhasil diekspor ke Excel & PDF.'),
-                            backgroundColor: AppTheme.emeraldGreen,
-                          ),
-                        );
-                      },
-                    ),
-                  ],
+                LayoutBuilder(
+                  builder: (context, constraints) {
+                    final isSmall = constraints.maxWidth < 480;
+                    return isSmall
+                        ? Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                'Log Absensi Karyawan Hari Ini (Realtime)',
+                                style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: AppTheme.slateGray),
+                              ),
+                              const SizedBox(height: 8),
+                              Align(
+                                alignment: Alignment.centerLeft,
+                                child: TextButton.icon(
+                                  icon: const Icon(Icons.file_download, size: 18),
+                                  label: const Text('Ekspor Laporan'),
+                                  onPressed: () {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text('Laporan absensi berhasil diekspor ke Excel & PDF.'),
+                                        backgroundColor: AppTheme.emeraldGreen,
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                            ],
+                          )
+                        : Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Flexible(
+                                child: Text(
+                                  'Log Absensi Karyawan Hari Ini (Realtime)',
+                                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppTheme.slateGray),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              TextButton.icon(
+                                icon: const Icon(Icons.file_download, size: 18),
+                                label: const Text('Ekspor Laporan'),
+                                onPressed: () {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text('Laporan absensi berhasil diekspor ke Excel & PDF.'),
+                                      backgroundColor: AppTheme.emeraldGreen,
+                                    ),
+                                  );
+                                },
+                              ),
+                            ],
+                          );
+                  },
                 ),
                 const SizedBox(height: 12),
                 SingleChildScrollView(

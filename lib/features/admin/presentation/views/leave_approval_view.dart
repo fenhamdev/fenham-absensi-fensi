@@ -96,67 +96,159 @@ class _LeaveApprovalViewState extends State<LeaveApprovalView> {
             itemBuilder: (context, index) {
               final leave = _pendingLeaves[index];
               return CustomCard(
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    CircleAvatar(
-                      radius: 24,
-                      backgroundColor: AppTheme.primaryNavy,
-                      child: Text(
-                        leave['name'].substring(0, 1),
-                        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Text(leave['name'], style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                              const SizedBox(width: 8),
-                              Text('• ${leave['department']}', style: const TextStyle(color: AppTheme.textMuted)),
-                              const Spacer(),
-                              StatusBadge(status: leave['status']),
-                            ],
-                          ),
-                          const SizedBox(height: 6),
-                          Text('Tipe: ${leave['type']} | Tanggal: ${leave['dates']}', style: const TextStyle(fontWeight: FontWeight.w600, color: AppTheme.primaryNavy)),
-                          const SizedBox(height: 4),
-                          Text('Alasan: ${leave['reason']}', style: const TextStyle(fontSize: 13)),
-                          if (leave['attachment'] != null) ...[
-                            const SizedBox(height: 8),
-                            Chip(
-                              avatar: const Icon(Icons.picture_as_pdf, size: 16, color: AppTheme.roseDanger),
-                              label: Text('Lampiran: ${leave['attachment']}'),
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    final isMobile = constraints.maxWidth < 550;
+                    return Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        CircleAvatar(
+                          radius: isMobile ? 20 : 24,
+                          backgroundColor: AppTheme.primaryNavy,
+                          child: Text(
+                            leave['name'].substring(0, 1),
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: isMobile ? 14 : 16,
                             ),
-                          ],
-                          const SizedBox(height: 12),
-                          if (leave['status'] == 'Pending')
-                            Row(
-                              children: [
-                                CustomButton(
-                                  text: 'Setujui (Approve)',
-                                  variant: ButtonVariant.success,
-                                  height: 38,
-                                  icon: Icons.check,
-                                  onPressed: () => _handleApproval(index, true),
+                          ),
+                        ),
+                        SizedBox(width: isMobile ? 12 : 16),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Wrap(
+                                alignment: WrapAlignment.spaceBetween,
+                                crossAxisAlignment: WrapCrossAlignment.center,
+                                spacing: 8,
+                                runSpacing: 6,
+                                children: [
+                                  Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Flexible(
+                                        child: Text(
+                                          leave['name'],
+                                          style: const TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 6),
+                                      Text(
+                                        '• ${leave['department']}',
+                                        style: const TextStyle(
+                                          color: AppTheme.textMuted,
+                                          fontSize: 13,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  StatusBadge(status: leave['status']),
+                                ],
+                              ),
+                              const SizedBox(height: 6),
+                              Text(
+                                'Tipe: ${leave['type']} | Tanggal: ${leave['dates']}',
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  color: AppTheme.primaryNavy,
+                                  fontSize: 13,
                                 ),
-                                const SizedBox(width: 10),
-                                CustomButton(
-                                  text: 'Tolak (Reject)',
-                                  variant: ButtonVariant.danger,
-                                  height: 38,
-                                  icon: Icons.close,
-                                  onPressed: () => _handleApproval(index, false),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                'Alasan: ${leave['reason']}',
+                                style: const TextStyle(fontSize: 13),
+                              ),
+                              if (leave['attachment'] != null) ...[
+                                const SizedBox(height: 8),
+                                Chip(
+                                  avatar: const Icon(Icons.picture_as_pdf,
+                                      size: 16, color: AppTheme.roseDanger),
+                                  label: Text(
+                                    'Lampiran: ${leave['attachment']}',
+                                    style: const TextStyle(fontSize: 12),
+                                  ),
                                 ),
                               ],
-                            ),
-                        ],
-                      ),
-                    ),
-                  ],
+                              const SizedBox(height: 12),
+                              if (leave['status'] == 'Pending')
+                                LayoutBuilder(
+                                  builder: (context, btnConstraints) {
+                                    final isNarrowBtn =
+                                        btnConstraints.maxWidth < 360;
+                                    return isNarrowBtn
+                                        ? Column(
+                                            children: [
+                                              SizedBox(
+                                                width: double.infinity,
+                                                child: CustomButton(
+                                                  text: 'Setujui (Approve)',
+                                                  variant:
+                                                      ButtonVariant.success,
+                                                  height: 38,
+                                                  icon: Icons.check,
+                                                  onPressed: () =>
+                                                      _handleApproval(
+                                                          index, true),
+                                                ),
+                                              ),
+                                              const SizedBox(height: 8),
+                                              SizedBox(
+                                                width: double.infinity,
+                                                child: CustomButton(
+                                                  text: 'Tolak (Reject)',
+                                                  variant: ButtonVariant.danger,
+                                                  height: 38,
+                                                  icon: Icons.close,
+                                                  onPressed: () =>
+                                                      _handleApproval(
+                                                          index, false),
+                                                ),
+                                              ),
+                                            ],
+                                          )
+                                        : Row(
+                                            children: [
+                                              Expanded(
+                                                child: CustomButton(
+                                                  text: 'Setujui (Approve)',
+                                                  variant:
+                                                      ButtonVariant.success,
+                                                  height: 38,
+                                                  icon: Icons.check,
+                                                  onPressed: () =>
+                                                      _handleApproval(
+                                                          index, true),
+                                                ),
+                                              ),
+                                              const SizedBox(width: 10),
+                                              Expanded(
+                                                child: CustomButton(
+                                                  text: 'Tolak (Reject)',
+                                                  variant: ButtonVariant.danger,
+                                                  height: 38,
+                                                  icon: Icons.close,
+                                                  onPressed: () =>
+                                                      _handleApproval(
+                                                          index, false),
+                                                ),
+                                              ),
+                                            ],
+                                          );
+                                  },
+                                ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    );
+                  },
                 ),
               );
             },

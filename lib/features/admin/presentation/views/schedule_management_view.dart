@@ -24,18 +24,57 @@ class ScheduleManagementView extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text('Matriks Jadwal Kerja - Agustus 2026', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                    DropdownButton<String>(
-                      value: 'All Departments',
-                      items: ['All Departments', 'Engineering', 'Human Capital', 'Finance'].map((d) {
-                        return DropdownMenuItem(value: d, child: Text(d));
-                      }).toList(),
-                      onChanged: (val) {},
-                    ),
-                  ],
+                LayoutBuilder(
+                  builder: (context, constraints) {
+                    final isSmall = constraints.maxWidth < 480;
+                    return isSmall
+                        ? Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text('Matriks Jadwal Kerja - Agustus 2026',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 15)),
+                              const SizedBox(height: 8),
+                              DropdownButton<String>(
+                                isExpanded: true,
+                                value: 'All Departments',
+                                items: [
+                                  'All Departments',
+                                  'Engineering',
+                                  'Human Capital',
+                                  'Finance'
+                                ].map((d) {
+                                  return DropdownMenuItem(
+                                      value: d, child: Text(d));
+                                }).toList(),
+                                onChanged: (val) {},
+                              ),
+                            ],
+                          )
+                        : Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text('Matriks Jadwal Kerja - Agustus 2026',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16)),
+                              DropdownButton<String>(
+                                value: 'All Departments',
+                                items: [
+                                  'All Departments',
+                                  'Engineering',
+                                  'Human Capital',
+                                  'Finance'
+                                ].map((d) {
+                                  return DropdownMenuItem(
+                                      value: d, child: Text(d));
+                                }).toList(),
+                                onChanged: (val) {},
+                              ),
+                            ],
+                          );
+                  },
                 ),
                 const SizedBox(height: 16),
                 SingleChildScrollView(

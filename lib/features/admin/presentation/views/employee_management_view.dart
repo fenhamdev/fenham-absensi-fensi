@@ -61,7 +61,7 @@ class _EmployeeManagementViewState extends State<EmployeeManagementView> {
       builder: (context) => AlertDialog(
         title: const Text('Tambah Karyawan Baru'),
         content: SizedBox(
-          width: 400,
+          width: MediaQuery.of(context).size.width > 500 ? 400 : double.infinity,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -109,28 +109,60 @@ class _EmployeeManagementViewState extends State<EmployeeManagementView> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
-                  Text(
-                    'Manajemen Data Karyawan (CRUD)',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppTheme.slateGray),
-                  ),
-                  Text(
-                    'Kelola profil, departemen, sisa kuota cuti, dan reset password karyawan',
-                    style: TextStyle(fontSize: 13, color: AppTheme.textMuted),
-                  ),
-                ],
-              ),
-              CustomButton(
-                text: 'Tambah Karyawan',
-                icon: Icons.person_add,
-                onPressed: _showAddEmployeeDialog,
-              ),
-            ],
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final isSmall = constraints.maxWidth < 600;
+              return isSmall
+                  ? Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Manajemen Data Karyawan (CRUD)',
+                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppTheme.slateGray),
+                        ),
+                        const SizedBox(height: 2),
+                        const Text(
+                          'Kelola profil, departemen, sisa kuota cuti, dan reset password karyawan',
+                          style: TextStyle(fontSize: 12, color: AppTheme.textMuted),
+                        ),
+                        const SizedBox(height: 12),
+                        SizedBox(
+                          width: double.infinity,
+                          child: CustomButton(
+                            text: 'Tambah Karyawan',
+                            icon: Icons.person_add,
+                            onPressed: _showAddEmployeeDialog,
+                          ),
+                        ),
+                      ],
+                    )
+                  : Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: const [
+                              Text(
+                                'Manajemen Data Karyawan (CRUD)',
+                                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppTheme.slateGray),
+                              ),
+                              Text(
+                                'Kelola profil, departemen, sisa kuota cuti, dan reset password karyawan',
+                                style: TextStyle(fontSize: 13, color: AppTheme.textMuted),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        CustomButton(
+                          text: 'Tambah Karyawan',
+                          icon: Icons.person_add,
+                          onPressed: _showAddEmployeeDialog,
+                        ),
+                      ],
+                    );
+            },
           ),
           const SizedBox(height: 20),
           CustomCard(

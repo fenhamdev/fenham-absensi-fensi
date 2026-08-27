@@ -57,12 +57,33 @@ class _GeofenceSettingViewState extends State<GeofenceSettingView> {
                 const SizedBox(height: 16),
                 CustomTextField(label: 'Alamat Lengkap', controller: _addressCtrl, maxLines: 2),
                 const SizedBox(height: 16),
-                Row(
-                  children: [
-                    Expanded(child: CustomTextField(label: 'Latitude Kantor', controller: _latCtrl)),
-                    const SizedBox(width: 12),
-                    Expanded(child: CustomTextField(label: 'Longitude Kantor', controller: _lngCtrl)),
-                  ],
+                LayoutBuilder(
+                  builder: (context, constraints) {
+                    final isSmall = constraints.maxWidth < 500;
+                    return isSmall
+                        ? Column(
+                            children: [
+                              CustomTextField(
+                                  label: 'Latitude Kantor', controller: _latCtrl),
+                              const SizedBox(height: 16),
+                              CustomTextField(
+                                  label: 'Longitude Kantor', controller: _lngCtrl),
+                            ],
+                          )
+                        : Row(
+                            children: [
+                              Expanded(
+                                  child: CustomTextField(
+                                      label: 'Latitude Kantor',
+                                      controller: _latCtrl)),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                  child: CustomTextField(
+                                      label: 'Longitude Kantor',
+                                      controller: _lngCtrl)),
+                            ],
+                          );
+                  },
                 ),
                 const SizedBox(height: 16),
                 CustomTextField(

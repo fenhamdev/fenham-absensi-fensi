@@ -73,11 +73,19 @@ class _AnnouncementManagementViewState extends State<AnnouncementManagementView>
                   maxLines: 4,
                 ),
                 const SizedBox(height: 20),
-                CustomButton(
-                  text: 'Publikasikan Sekarang',
-                  icon: Icons.campaign_rounded,
-                  isLoading: _isPublishing,
-                  onPressed: _publishAnnouncement,
+                LayoutBuilder(
+                  builder: (context, constraints) {
+                    final isSmall = constraints.maxWidth < 500;
+                    return SizedBox(
+                      width: isSmall ? double.infinity : null,
+                      child: CustomButton(
+                        text: 'Publikasikan Sekarang',
+                        icon: Icons.campaign_rounded,
+                        isLoading: _isPublishing,
+                        onPressed: _publishAnnouncement,
+                      ),
+                    );
+                  },
                 ),
               ],
             ),
