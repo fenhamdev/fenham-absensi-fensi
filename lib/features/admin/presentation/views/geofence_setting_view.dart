@@ -13,9 +13,9 @@ class GeofenceSettingView extends StatefulWidget {
 
 class _GeofenceSettingViewState extends State<GeofenceSettingView> {
   final _nameCtrl = TextEditingController(text: 'PT. Fenham Indonesia Utama');
-  final _addressCtrl = TextEditingController(text: 'Jl. Jend. Sudirman No. 45, Jakarta Pusat');
-  final _latCtrl = TextEditingController(text: '-6.208800');
-  final _lngCtrl = TextEditingController(text: '106.845600');
+  final _addressCtrl = TextEditingController(text: 'Jl. Pogung Raya No. 171 B, Pogung Kidul, Sinduadi, Mlati, Sleman, DI Yogyakarta');
+  final _latCtrl = TextEditingController(text: '-7.7542585');
+  final _lngCtrl = TextEditingController(text: '110.3762106');
   final _radiusCtrl = TextEditingController(text: '150');
   bool _isSaving = false;
 

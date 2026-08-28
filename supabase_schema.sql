@@ -21,9 +21,9 @@ CREATE TABLE IF NOT EXISTS public.profiles (
 CREATE TABLE IF NOT EXISTS public.companies (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     company_name TEXT NOT NULL DEFAULT 'PT. Fenham Indonesia Utama',
-    address TEXT DEFAULT 'Jl. Jend. Sudirman No. 45, Jakarta Pusat',
-    office_lat DOUBLE PRECISION NOT NULL DEFAULT -6.208800,
-    office_lng DOUBLE PRECISION NOT NULL DEFAULT 106.845600,
+    address TEXT DEFAULT 'Jl. Pogung Raya No. 171 B, Pogung Kidul, Sinduadi, Mlati, Sleman, DI Yogyakarta',
+    office_lat DOUBLE PRECISION NOT NULL DEFAULT -7.7542585,
+    office_lng DOUBLE PRECISION NOT NULL DEFAULT 110.3762106,
     radius_meters DOUBLE PRECISION NOT NULL DEFAULT 150.0,
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
@@ -87,7 +87,7 @@ GRANT ALL ON ALL TABLES IN SCHEMA public TO postgres, service_role, anon, authen
 -- SEED DATA AWAL UNTUK PERUSAHAAN (DEFAULT GEOFENCE KANTOR)
 -- ====================================================================
 INSERT INTO public.companies (company_name, address, office_lat, office_lng, radius_meters)
-VALUES ('PT. Fenham Indonesia Utama', 'Jl. Jend. Sudirman No. 45, Jakarta Pusat', -6.208800, 106.845600, 150.0)
+VALUES ('PT. Fenham Indonesia Utama', 'Jl. Pogung Raya No. 171 B, Pogung Kidul, Sinduadi, Mlati, Sleman, DI Yogyakarta', -7.7542585, 110.3762106, 150.0)
 ON CONFLICT DO NOTHING;
 
 -- ====================================================================

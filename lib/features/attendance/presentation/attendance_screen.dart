@@ -26,14 +26,14 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
   String? _clockInTimeString;
   String? _clockOutTimeString;
 
-  // Office Location (Default PT Fenham Jakarta)
-  final double officeLat = -6.2088;
-  final double officeLng = 106.8456;
+  // Office Location (FENHAM - Toko Oleh-Oleh Haji Umroh Jogja)
+  final double officeLat = -7.7542585;
+  final double officeLng = 110.3762106;
   final double allowedRadiusMeters = 150.0;
 
   // Current Position State
-  double _currentLat = -6.2085;
-  double _currentLng = 106.8455;
+  double _currentLat = -7.7542;
+  double _currentLng = 110.3761;
   double _distanceToOfficeMeters = 42.5;
   bool _isWithinGeofence = true;
   bool _isLoadingLocation = false;
